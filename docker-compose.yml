@@ -14,6 +14,7 @@ services:
     entrypoint: tail -f /dev/null
     depends_on:
       - server
+    profiles: [ "debug" ]
 
   server:
     image: ${DOCKER_IMAGE:-server}
@@ -23,3 +24,13 @@ services:
         PRODUCT_VERSION: ${PRODUCT_VERSION:-0.0}
         PRODUCT_REVISION: ${PRODUCT_REVISION:-0}
     restart: always
+    profiles: [ "server" ]
+
+  database:
+    image: postgres:12.12-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASS}
+      POSTGRES_DB: ${DATABASE_NAME}

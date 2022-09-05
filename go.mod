@@ -1,12 +1,32 @@
-module github.com/ismtabo/mapon-viewer
+module github.com/ismtabo/phrases-of-the-year
 
-go 1.16
+go 1.18
 
 require (
-	github.com/Telefonica/golium v0.12.3
-	github.com/cucumber/godog v0.11.0
+	github.com/DATA-DOG/go-sqlmock v1.5.0
+	github.com/andreyvit/sqlexpr v0.1.2
+	github.com/golang/mock v1.6.0
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/kisielk/sqlstruct v0.0.0-20210630145711-dae28ed37023
+	github.com/lib/pq v1.10.6
 	github.com/pkg/errors v0.9.1
-	github.com/rs/zerolog v1.22.0
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	github.com/rs/zerolog v1.28.0
+	gopkg.in/yaml.v3 v3.0.1
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
+)
+
+require (
+	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/jinzhu/copier v0.3.5
+	github.com/kr/text v0.2.0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.16 // indirect
+	github.com/stretchr/testify v1.8.0
+	golang.org/x/sys v0.0.0-20220829200755-d48e67d00261 // indirect
+	gopkg.in/telebot.v3 v3.0.0
 )

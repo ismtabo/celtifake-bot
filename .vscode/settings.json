@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "phrases_bot",
+            "group": "Phrases of the year",
+            "database": "phrases_of_the_year",
+            "username": "admin",
+            "password": "admin"
+        }
+    ]
+}

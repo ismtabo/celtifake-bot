@@ -1,15 +1,45 @@
+# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,go,dotenv,direnv,database,data
+# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,go,dotenv,direnv,database,data
 
-# Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,go
-# Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,go
+### Data ###
+*.csv
+*.dat
+*.efx
+*.gbr
+*.key
+*.pps
+*.ppt
+*.pptx
+*.sdf
+*.tax2010
+*.vcf
+*.xml
+
+### Database ###
+*.accdb
+*.db
+*.dbf
+*.mdb
+*.pdb
+*.sqlite3
+
+### direnv ###
+.direnv
+.envrc
+
+### dotenv ###
+.env
 
 ### Go ###
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
 # Binaries for programs and plugins
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
-/build/
 
 # Test binary, built with `go test -c`
 *.test
@@ -19,6 +49,9 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# Go workspace file
+go.work
 
 ### Go Patch ###
 /vendor/
@@ -30,15 +63,23 @@
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-*.code-workspace
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
 
 ### VisualStudioCode Patch ###
 # Ignore all local history of files
 .history
 .ionide
 
-### Logs ###
-# Logs files
-*.log
+# Support for Project snippet scope
+.vscode/*.code-snippets
 
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,go
+# Ignore code-workspaces
+*.code-workspace
+
+# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,go,dotenv,direnv,database,data
