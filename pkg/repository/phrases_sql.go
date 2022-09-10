@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	"github.com/andreyvit/sqlexpr"
+	"github.com/ismtabo/phrases-of-the-year/pkg/context/request"
 	"github.com/ismtabo/phrases-of-the-year/pkg/model"
 	"github.com/ismtabo/phrases-of-the-year/pkg/repository/dbo"
 	"github.com/ismtabo/phrases-of-the-year/pkg/repository/query"
@@ -37,6 +38,7 @@ func (r sqlitePhrasesRepository) CreatePhrase(ctx context.Context, phrase *model
 }
 
 func (r sqlitePhrasesRepository) GetPhrases(ctx context.Context, match string) ([]*model.Phrase, error) {
+	req := request.Ctx(ctx)
 	s := sqlexpr.Select{From: query.PhrasesTable}
 	query.AddPhraseFields(&s, query.AllFacet)
 	s.AddWhere(
@@ -45,6 +47,7 @@ func (r sqlitePhrasesRepository) GetPhrases(ctx context.Context, match string) (
 			"@@",
 			sqlexpr.Func("to_tsquery", sqlexpr.Value(match)),
 		),
+		sqlexpr.Eq(sqlexpr.Column(query.PhraseGroup), req.GroupID),
 	)
 	sql, args := sqlexpr.Build(s)
 	rows, err := r.db.QueryContext(ctx, sql, args...)

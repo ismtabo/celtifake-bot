@@ -9,7 +9,9 @@ import (
 	"time"
 
 	"github.com/ismtabo/phrases-of-the-year/pkg/cfg"
+	context_ "github.com/ismtabo/phrases-of-the-year/pkg/context"
 	"github.com/ismtabo/phrases-of-the-year/pkg/controller"
+	"github.com/ismtabo/phrases-of-the-year/pkg/middleware"
 	"github.com/ismtabo/phrases-of-the-year/pkg/repository"
 	"github.com/ismtabo/phrases-of-the-year/pkg/service"
 	"github.com/rs/zerolog"
@@ -46,22 +48,25 @@ func main() {
 	ctrl := controller.NewTelegramApiBotController(bot, svc)
 
 	ctx := context.Background()
-	bot.Handle("/start", func(context tele.Context) error {
-		ctx := log.With().Int("id", context.Update().Message.ID).Str("op", "start").Logger().WithContext(ctx)
-		return ctrl.Start(ctx, context)
-	})
-	bot.Handle("/help", func(context tele.Context) error {
-		ctx := log.With().Int("id", context.Update().Message.ID).Str("op", "help").Logger().WithContext(ctx)
-		return ctrl.Help(ctx, context)
-	})
-	bot.Handle("/new", func(context tele.Context) error {
-		ctx := log.With().Int("id", context.Update().Message.ID).Str("op", "new").Logger().WithContext(ctx)
-		return ctrl.New(ctx, context)
-	})
-	bot.Handle("/search", func(context tele.Context) error {
-		ctx := log.With().Int("id", context.Update().Message.ID).Str("op", "search").Logger().WithContext(ctx)
-		return ctrl.Search(ctx, context)
-	})
+	bot.Use(middleware.Context(ctx))
+	bot.Use(middleware.Request())
+
+	bot.Handle("/start", func(tgCtx tele.Context) error {
+		ctx := context_.Ctx(tgCtx)
+		return ctrl.Start(ctx, tgCtx)
+	}, middleware.LogOp("start"))
+	bot.Handle("/help", func(tgCtx tele.Context) error {
+		ctx := context_.Ctx(tgCtx)
+		return ctrl.Help(ctx, tgCtx)
+	}, middleware.LogOp("help"))
+	bot.Handle("/new", func(tgCtx tele.Context) error {
+		ctx := context_.Ctx(tgCtx)
+		return ctrl.New(ctx, tgCtx)
+	}, middleware.LogOp("new"))
+	bot.Handle("/search", func(tgCtx tele.Context) error {
+		ctx := context_.Ctx(tgCtx)
+		return ctrl.Search(ctx, tgCtx)
+	}, middleware.LogOp("search"))
 	bot.OnError = func(err error, context tele.Context) {
 		log.Err(err).Msgf("error handling message %+v", context)
 		context.Send("Something bad occurs")

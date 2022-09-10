@@ -9,6 +9,7 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/andreyvit/sqlexpr"
+	"github.com/ismtabo/phrases-of-the-year/pkg/context/request"
 	"github.com/ismtabo/phrases-of-the-year/pkg/model"
 	"github.com/ismtabo/phrases-of-the-year/pkg/repository/dbo"
 	"github.com/ismtabo/phrases-of-the-year/pkg/repository/query"
@@ -127,6 +128,7 @@ func TestGetPhrase_Empty(t *testing.T) {
 	defer db.Close()
 	repo := NewSqlitePhrasesRepository(db)
 
+	req := request.Request{GroupID: "1"}
 	match := "value"
 
 	s := sqlexpr.Select{From: query.PhrasesTable}
@@ -137,6 +139,7 @@ func TestGetPhrase_Empty(t *testing.T) {
 			"@@",
 			sqlexpr.Func("to_tsquery", sqlexpr.Value(match)),
 		),
+		sqlexpr.Eq(sqlexpr.Column(query.PhraseGroup), req.GroupID),
 	)
 	sql, _ := sqlexpr.Build(s)
 
@@ -144,7 +147,8 @@ func TestGetPhrase_Empty(t *testing.T) {
 	mock.ExpectQuery(sql).WithArgs(match).WillReturnRows(rows)
 
 	// now we execute our method
-	phrases, err := repo.GetPhrases(context.Background(), "phrase")
+	ctx := req.WithContext(context.Background())
+	phrases, err := repo.GetPhrases(ctx, "phrase")
 	if err != nil {
 		t.Fatalf("error was not expected while getting phrases: %s", err)
 	}
@@ -165,6 +169,7 @@ func TestGetPhrase_Results(t *testing.T) {
 	defer db.Close()
 	repo := NewSqlitePhrasesRepository(db)
 
+	req := request.Request{GroupID: "1"}
 	match := "value"
 	expectedPhrase := &model.Phrase{
 		Id:        1,
@@ -182,6 +187,7 @@ func TestGetPhrase_Results(t *testing.T) {
 			"@@",
 			sqlexpr.Func("to_tsquery", sqlexpr.Value(match)),
 		),
+		sqlexpr.Eq(sqlexpr.Column(query.PhraseGroup), req.GroupID),
 	)
 	sql, _ := sqlexpr.Build(s)
 
@@ -191,7 +197,8 @@ func TestGetPhrase_Results(t *testing.T) {
 	mock.ExpectQuery(sql).WithArgs(match).WillReturnRows(rows)
 
 	// now we execute our method
-	phrases, err := repo.GetPhrases(context.Background(), "phrase")
+	ctx := req.WithContext(context.Background())
+	phrases, err := repo.GetPhrases(ctx, "phrase")
 	if err != nil {
 		t.Fatalf("error was not expected while getting phrases: %s", err)
 	}
