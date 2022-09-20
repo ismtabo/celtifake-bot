@@ -30,7 +30,7 @@ RUN make build-bin build-config
 #########################################################
 # Production stage
 #########################################################
-FROM gcr.io/distroless/base
+FROM gcr.io/distroless/base:debug
 USER nobody
 COPY --from=build --chown=nobody:nobody /src/build/bin /app
 WORKDIR /app
