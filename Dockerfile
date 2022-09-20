@@ -1,7 +1,7 @@
 #########################################################
 # Develenv stage
 #########################################################
-FROM golang:1.16.4-alpine3.13 AS develenv
+FROM golang:1.18.1-alpine AS develenv
 RUN apk add --no-cache git make bash gcc docker-cli curl
 WORKDIR /src
 ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
@@ -34,4 +34,4 @@ FROM gcr.io/distroless/base
 USER nobody
 COPY --from=build --chown=nobody:nobody /src/build/bin /app
 WORKDIR /app
-ENTRYPOINT ["./server"]
+ENTRYPOINT ["./bot"]

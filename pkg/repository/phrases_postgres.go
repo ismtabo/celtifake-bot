@@ -17,7 +17,7 @@ type sqlitePhrasesRepository struct {
 	db *sql.DB
 }
 
-func NewSqlitePhrasesRepository(db *sql.DB) PhrasesRepository {
+func NewPostgresPhrasesRepository(db *sql.DB) PhrasesRepository {
 	return sqlitePhrasesRepository{db: db}
 }
 

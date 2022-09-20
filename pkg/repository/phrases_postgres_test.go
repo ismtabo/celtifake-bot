@@ -27,7 +27,7 @@ func TestCreatePhrase(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	repo := NewSqlitePhrasesRepository(db)
+	repo := NewPostgresPhrasesRepository(db)
 
 	expectedPhrase := &model.Phrase{
 		Content: "content",
@@ -75,7 +75,7 @@ func TestCreatePhrase_Error(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	repo := NewSqlitePhrasesRepository(db)
+	repo := NewPostgresPhrasesRepository(db)
 
 	expectedError := errors.New("expected error")
 
@@ -126,7 +126,7 @@ func TestGetPhrase_Empty(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	repo := NewSqlitePhrasesRepository(db)
+	repo := NewPostgresPhrasesRepository(db)
 
 	req := request.Request{GroupID: "1"}
 	match := "value"
@@ -167,7 +167,7 @@ func TestGetPhrase_Results(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	repo := NewSqlitePhrasesRepository(db)
+	repo := NewPostgresPhrasesRepository(db)
 
 	req := request.Request{GroupID: "1"}
 	match := "value"

@@ -1,36 +1,35 @@
 version: '3.4'
 
 services:
-
-  develenv:
-    build:
-      context: .
-      target: build
-    environment:
-      PRODUCT_VERSION: ${PRODUCT_VERSION:-0.0}
-      PRODUCT_REVISION: ${PRODUCT_REVISION:-0}
-      HOST_UID_GID: ${HOST_UID_GID:-}
-      DOCKER_HOST: ${DOCKER_HOST:-}
-    entrypoint: tail -f /dev/null
-    depends_on:
-      - server
-    profiles: [ "debug" ]
-
-  server:
-    image: ${DOCKER_IMAGE:-server}
+  bot:
     build:
       context: .
       args:
         PRODUCT_VERSION: ${PRODUCT_VERSION:-0.0}
         PRODUCT_REVISION: ${PRODUCT_REVISION:-0}
     restart: always
-    profiles: [ "server" ]
+    environment:
+      TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASS: ${DATABASE_PASS}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+    depends_on:
+      postgres:
+        condition: service_healthy
 
-  database:
+  postgres:
     image: postgres:12.12-alpine
+    hostname: postgres
     ports:
       - 5432:5432
     environment:
       POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASS}
       POSTGRES_DB: ${DATABASE_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

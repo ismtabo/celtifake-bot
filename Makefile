@@ -2,10 +2,10 @@ DOCKER_USER             ?= ismtabo
 DOCKER_PASSWORD         ?=
 DOCKER_REGISTRY         ?= hub.docker.com/
 DOCKER_ORG              ?= 
-DOCKER_PROJECT          ?= go-server-template
+DOCKER_PROJECT          ?= celtifake-bot
 DOCKER_API_VERSION      ?=
 DOCKER_IMAGE            ?= $(if $(DOCKER_REGISTRY),$(DOCKER_REGISTRY)/$(DOCKER_ORG)/$(DOCKER_PROJECT),$(DOCKER_ORG)/$(DOCKER_PROJECT))
-DOCKER_SERVICES         ?= server mongo
+DOCKER_SERVICES         ?= postgres
 
 USER_UID                ?= $(shell id -u)
 USER_GID                ?= $(shell id -g)
@@ -19,7 +19,7 @@ LDFLAGS                 ?= $(LDFLAGS_OPTIMIZATION)
 
 DOCKER_COMPOSE_PROJECT  := $(shell echo '$(DOCKER_PROJECT)' | sed -e 's/[^a-z0-9]//g')
 DOCKER_COMPOSE_ENV      := HOST_UID_GID='$(USER_UID):$(USER_GID)'
-DOCKER_COMPOSE          := $(DOCKER_COMPOSE_ENV) docker-compose -p '$(DOCKER_COMPOSE_PROJECT)'
+DOCKER_COMPOSE          := $(DOCKER_COMPOSE_ENV) docker compose -p '$(DOCKER_COMPOSE_PROJECT)'
 
 # Get the environment and import the settings.
 # If the make target is pipeline-xxx, the environment is obtained from the target.
@@ -157,7 +157,7 @@ deploy:
 .PHONY: run
 run:
 	$(info) 'Launching the service'
-	build/bin/ingestion_agent
+	build/bin/bot
 
 .PHONY: pipeline-pull
 pipeline-pull: build test-acceptance
@@ -201,7 +201,17 @@ ci-pipeline: check-PRODUCT_VERSION check-PRODUCT_REVISION
 .PHONY: develenv-up
 develenv-up:
 	$(info) 'Launching the development environment: $(PRODUCT_VERSION)-$(PRODUCT_REVISION)'
-	$(DOCKER_COMPOSE) up --build -d
+	$(DOCKER_COMPOSE) up --build -d $(DOCKER_SERVICES)
+
+.PHONY: develenv-start
+develenv-start:
+	$(info) 'Starting the development environment: $(PRODUCT_VERSION)-$(PRODUCT_REVISION)'
+	$(DOCKER_COMPOSE) start $(DOCKER_SERVICES)
+
+.PHONY: develenv-stop
+develenv-stop:
+	$(info) 'Stoping the development environment: $(PRODUCT_VERSION)-$(PRODUCT_REVISION)'
+	$(DOCKER_COMPOSE) stop $(DOCKER_SERVICES)
 
 .PHONY: develenv-sh
 develenv-sh:
@@ -210,7 +220,7 @@ develenv-sh:
 .PHONY: develenv-down
 develenv-down:
 	$(info) 'Shutting down the development environment'
-	$(DOCKER_COMPOSE) down --remove-orphans
+	$(DOCKER_COMPOSE) down --remove-orphans --volumes $(DOCKER_SERVICES)
 
 # Functions
 info := @printf '\033[32;01m%s\033[0m\n'

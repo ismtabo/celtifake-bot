@@ -43,7 +43,7 @@ func main() {
 	}
 
 	db := getSqliteConn(&config, log)
-	repo := repository.NewSqlitePhrasesRepository(db)
+	repo := repository.NewPostgresPhrasesRepository(db)
 	svc := service.NewPhrasesService(repo)
 	ctrl := controller.NewTelegramApiBotController(bot, svc)
 
@@ -69,9 +69,12 @@ func main() {
 	}, middleware.LogOp("search"))
 	bot.OnError = func(err error, context tele.Context) {
 		log.Err(err).Msgf("error handling message %+v", context)
-		context.Send("Something bad occurs")
+		if err := context.Send("Something bad occurs"); err != nil {
+			log.Err(err).Msgf("error sending error message %+v", context)
+		}
 	}
 
+	log.Info().Msg("Starting bot..")
 	bot.Start()
 }
 

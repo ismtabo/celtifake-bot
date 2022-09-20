@@ -1,15 +1,23 @@
 version: '3.4'
 
 services:
-    
+
   develenv:
     build:
+      context: .
       target: develenv
     environment:
+      PRODUCT_VERSION: ${PRODUCT_VERSION:-0.0}
+      PRODUCT_REVISION: ${PRODUCT_REVISION:-0}
+      HOST_UID_GID: ${HOST_UID_GID:-}
+      DOCKER_HOST: ${DOCKER_HOST:-}
       GODOG_FORMAT: ${GODOG_FORMAT:-pretty}
+    entrypoint: tail -f /dev/null
     volumes:
       - .:/src
+    depends_on:
+      - bot
 
-  server:
-    ports:
-      - 8080:8080
+  bot:
+    deploy:
+      replicas: 0
